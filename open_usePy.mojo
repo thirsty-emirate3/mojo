@@ -1,4 +1,9 @@
 from python import Python
+import os
+from sys import llvm_intrinsic
+from pathlib import Path, _dir_of_current_file
+from builtin.file import open, FileHandle
+from os import PathLike
 
 
 
@@ -8,7 +13,7 @@ fn main() raises:
     var str = Python.import_module("struct")  # Pythonのstructモジュール
 
     var file_path = "/Users/sharu/Desktop/Warpspace/dat/pcs_output.dat"
-    var out: List[SIMD[DType.float32, 1]] = List[SIMD[DType.float32, 1]]()#
+    var out: List[SIMD[DType.float64, 1]]#
     # ファイルの存在を確認
     if not os.path.exists(file_path):
         print("Error: File not found at", file_path)
@@ -17,6 +22,7 @@ fn main() raises:
     # ファイルを開く
     var file = builtins.open(file_path, "rb")
     print("File opened successfully!")
+    out = List[SIMD[DType.float64, 1]](30000)
     var count = 0
 
     try:
@@ -28,16 +34,14 @@ fn main() raises:
                 print("End of File Reached!")
                 break # 4バイト未満なら終了
 
-            # バイ��リデータをFloat32に変換
+            # バイ��リデータをFloat64に変換
             var value = str.unpack("f", chunk)[0]
-            print("Float32 value:", value)
-            var value_float = builtins.float(value)#
-            print(value_float)
-            var value_f = Float32(value_float)
-            print(value_f[0])
-
-            #out.append(Float32(value_float))  # Append value_float instead of value
-            #out[count] = Float32(value_float)
+            print("Float64 value:", value)
+            var value_f = float(value)
+            print(value_f)
+            # out.append(Float32(value_float))  # Append value_float instead of value
+            out[count] = value_f
+            print(out[count])
             count += 1
             
 
